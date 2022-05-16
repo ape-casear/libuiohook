@@ -1151,20 +1151,20 @@ static int create_event_runloop_info(event_runloop_info **hook) {
             CGEventMaskBit(kCGEventKeyUp) |
             CGEventMaskBit(kCGEventFlagsChanged) |
 
-            CGEventMaskBit(kCGEventLeftMouseDown) |
-            CGEventMaskBit(kCGEventLeftMouseUp) |
-            CGEventMaskBit(kCGEventLeftMouseDragged) |
+            // CGEventMaskBit(kCGEventLeftMouseDown) |
+            // CGEventMaskBit(kCGEventLeftMouseUp) |
+            // CGEventMaskBit(kCGEventLeftMouseDragged) |
 
-            CGEventMaskBit(kCGEventRightMouseDown) |
-            CGEventMaskBit(kCGEventRightMouseUp) |
-            CGEventMaskBit(kCGEventRightMouseDragged) |
+            // CGEventMaskBit(kCGEventRightMouseDown) |
+            // CGEventMaskBit(kCGEventRightMouseUp) |
+            // CGEventMaskBit(kCGEventRightMouseDragged) |
 
-            CGEventMaskBit(kCGEventOtherMouseDown) |
-            CGEventMaskBit(kCGEventOtherMouseUp) |
-            CGEventMaskBit(kCGEventOtherMouseDragged) |
+            // CGEventMaskBit(kCGEventOtherMouseDown) |
+            // CGEventMaskBit(kCGEventOtherMouseUp) |
+            // CGEventMaskBit(kCGEventOtherMouseDragged) |
 
-            CGEventMaskBit(kCGEventMouseMoved) |
-            CGEventMaskBit(kCGEventScrollWheel) |
+            // CGEventMaskBit(kCGEventMouseMoved) |
+            // CGEventMaskBit(kCGEventScrollWheel) |
 
             // NOTE This event is undocumented and used
             // for caps-lock release and multi-media keys.
