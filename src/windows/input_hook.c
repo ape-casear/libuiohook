@@ -583,23 +583,6 @@ LRESULT CALLBACK mouse_hook_event_proc(int nCode, WPARAM wParam, LPARAM lParam) 
                 process_button_released(mshook, MOUSE_BUTTON5);
             }
             break;
-
-        case WM_MOUSEMOVE:
-            process_mouse_moved(mshook);
-            break;
-
-        case WM_MOUSEWHEEL:
-            process_mouse_wheel(mshook, WHEEL_VERTICAL_DIRECTION);
-            break;
-
-        /* For horizontal scroll wheel support.
-         * NOTE Windows >= Vista
-         * case 0x020E:
-         */
-        case WM_MOUSEHWHEEL:
-            process_mouse_wheel(mshook, WHEEL_HORIZONTAL_DIRECTION);
-            break;
-
         default:
             // In theory this *should* never execute.
             logger(LOG_LEVEL_DEBUG, "%s [%u]: Unhandled Windows mouse event: %#X.\n",
@@ -631,13 +614,13 @@ void CALLBACK win_hook_event_proc(HWINEVENTHOOK hook, DWORD event, HWND hWnd, LO
                 UnhookWindowsHookEx(keyboard_event_hhook);
             }
 
-            // if (mouse_event_hhook != NULL) {
-            //     UnhookWindowsHookEx(mouse_event_hhook);
-            // }
+            if (mouse_event_hhook != NULL) {
+                UnhookWindowsHookEx(mouse_event_hhook);
+            }
 
             // Restart the event hooks.
             keyboard_event_hhook = SetWindowsHookEx(WH_KEYBOARD_LL, keyboard_hook_event_proc, hInst, 0);
-            // mouse_event_hhook = SetWindowsHookEx(WH_MOUSE_LL, mouse_hook_event_proc, hInst, 0);
+            mouse_event_hhook = SetWindowsHookEx(WH_MOUSE_LL, mouse_hook_event_proc, hInst, 0);
 
             // Re-initialize modifier masks.
             initialize_modifiers();
@@ -646,7 +629,7 @@ void CALLBACK win_hook_event_proc(HWINEVENTHOOK hook, DWORD event, HWND hWnd, LO
             // to determine if we should synthesize missing events.
 
             // Check for event hook error.
-            if (keyboard_event_hhook == NULL) {
+            if (keyboard_event_hhook == NULL || mouse_event_hhook == NULL) {
                 logger(LOG_LEVEL_ERROR, "%s [%u]: SetWindowsHookEx() failed! (%#lX)\n",
                         __FUNCTION__, __LINE__, (unsigned long) GetLastError());
             }
@@ -685,7 +668,7 @@ UIOHOOK_API int hook_run() {
 
     // Create the native hooks.
     keyboard_event_hhook = SetWindowsHookEx(WH_KEYBOARD_LL, keyboard_hook_event_proc, hInst, 0);
-    // mouse_event_hhook = SetWindowsHookEx(WH_MOUSE_LL, mouse_hook_event_proc, hInst, 0);
+    mouse_event_hhook = SetWindowsHookEx(WH_MOUSE_LL, mouse_hook_event_proc, hInst, 0);
 
     // Create a window event hook to listen for capture change.
     win_event_hhook = SetWinEventHook(
@@ -696,7 +679,7 @@ UIOHOOK_API int hook_run() {
             WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
 
     // If we did not encounter a problem, start processing events.
-    if (keyboard_event_hhook != NULL) {
+    if (keyboard_event_hhook != NULL && mouse_event_hhook != NULL) {
         if (win_event_hhook == NULL) {
             logger(LOG_LEVEL_WARN, "%s [%u]: SetWinEventHook() failed!\n",
                     __FUNCTION__, __LINE__);
